@@ -120,13 +120,13 @@
         <h2>Totale condiviso</h2>
 
         <div class="totale">
-          <span>Metrica A</span>
-          <strong id="totaleA">0</strong>
+          <span>Peso Totale Zaino</span>
+          <strong id="totZaino">0</strong>
         </div>
 
         <div class="totale">
-          <span>Metrica B</span>
-          <strong id="totaleB">0</strong>
+          <span>Peso Totale del Servizio</span>
+          <strong id="totServ">0</strong>
         </div>
       </div>
 
@@ -176,8 +176,8 @@
     const inputB = document.getElementById("Servizio");
     const salvaBtn = document.getElementById("salvaBtn");
 
-    const totaleA = document.getElementById("totaleA");
-    const totaleB = document.getElementById("totaleB");
+    const totaleA = document.getElementById("totZaino");
+    const totaleB = document.getElementById("totServ");
 
     const messaggio = document.getElementById("messaggio");
 
@@ -190,7 +190,7 @@
 
       const { data, error } = await supabaseClient
         .from("metriche")
-        .select("metrica_a, metrica_b")
+        .select("peso_zaino, peso_bilancia")
         .eq("session_id", sessionId)
         .maybeSingle();
 
@@ -200,8 +200,8 @@
       }
 
       if (data) {
-        inputA.value = data.metrica_a;
-        inputB.value = data.metrica_b;
+        inputA.value = data.peso_zaino;
+        inputB.value = data.peso_bilancia;
       }
     }
 
@@ -214,7 +214,7 @@
 
       const { data, error } = await supabaseClient
         .from("metriche")
-        .select("metrica_a, metrica_b");
+        .select("peso_zaino, peso_bilancia");
 
       if (error) {
         console.error(error);
@@ -226,8 +226,8 @@
       let sommaB = 0;
 
       for (const riga of data) {
-        sommaA += Number(riga.metrica_a) || 0;
-        sommaB += Number(riga.metrica_b) || 0;
+        sommaA += Number(riga.peso_zaino) || 0;
+        sommaB += Number(riga.peso_bilancia) || 0;
       }
 
       totaleA.textContent = sommaA;
@@ -251,8 +251,8 @@
         .upsert(
           {
             session_id: sessionId,
-            metrica_a: valoreA,
-            metrica_b: valoreB
+            peso_zaino: valoreA,
+            peso_bilancia: valoreB
           },
           {
             onConflict: "session_id"
