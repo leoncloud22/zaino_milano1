@@ -239,36 +239,39 @@
     // 6. SALVA I DATI DELLA SESSIONE
     // =========================================================
 
-    async function salva() {
+async function salva() {
 
-      const valoreA = Number(inputA.value) || 0;
-      const valoreB = Number(inputB.value) || 0;
+  const valoreA = Number(inputA.value) || 0;
+  const valoreB = Number(inputB.value) || 0;
 
-      messaggio.textContent = "Salvataggio...";
+  messaggio.textContent = "Salvataggio...";
 
-      const { error } = await supabaseClient
-        .from("metriche")
-        .upsert(
-          {
-            session_id: sessionId,
-            peso_zaino: valoreA,
-            peso_bilancia: valoreB
-          },
-          {
-            onConflict: "session_id"
-          }
-        );
-
-      if (error) {
-        console.error(error);
-        messaggio.textContent = "Errore nel salvataggio.";
-        return;
+  const { data, error } = await supabaseClient
+    .from("metriche")
+    .upsert(
+      {
+        session_id: sessionId,
+        peso_zaino: valoreA,
+        peso_bilancia: valoreB
+      },
+      {
+        onConflict: "session_id"
       }
+    )
+    .select();
 
-      messaggio.textContent = "Salvato!";
+  if (error) {
+    console.error("ERRORE SUPABASE:", error);
+    messaggio.textContent = "Errore: " + error.message;
+    return;
+  }
 
-      await caricaTotali();
-    }
+  console.log("Salvato:", data);
+
+  messaggio.textContent = "Salvato!";
+
+  await caricaTotali();
+}
 
 
     // =========================================================
