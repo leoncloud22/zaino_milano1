@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Metriche</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      color: #222;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: 50px auto;
+      padding: 24px;
+    }
+
+    .card {
+      background: white;
+      padding: 24px;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+
+    h1 {
+      margin-top: 0;
+      text-align: center;
+    }
+
+    label {
+      display: block;
+      margin-top: 18px;
+      margin-bottom: 6px;
+      font-weight: bold;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px;
+      font-size: 18px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 22px;
+      padding: 14px;
+      font-size: 18px;
+      font-weight: bold;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      background: #222;
+      color: white;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
+    .totali {
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid #ddd;
+    }
+
+    .totale {
+      display: flex;
+      justify-content: space-between;
+      font-size: 20px;
+      margin: 12px 0;
+    }
+
+    .messaggio {
+      margin-top: 15px;
+      text-align: center;
+      min-height: 20px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <div class="card">
+
+      <h1>Metriche</h1>
+
+      <label for="Zaino">Zaino</label>
+      <input
+        id="Zaino"
+        type="number"
+        step="any"
+        placeholder="Inserisci Peso Dello Zaino"
+      />
+
+      <label for="Servizio">Peso Del Servizio</label>
+      <input
+        id="Servizio"
+        type="number"
+        step="any"
+        placeholder="Inserisci Peso Del Servizio"
+      />
+
+      <button id="salvaBtn">SALVA</button>
+
+      <div class="messaggio" id="messaggio"></div>
+
+      <div class="totali">
+        <h2>Totale condiviso</h2>
+
+        <div class="totale">
+          <span>Metrica A</span>
+          <strong id="totaleA">0</strong>
+        </div>
+
+        <div class="totale">
+          <span>Metrica B</span>
+          <strong id="totaleB">0</strong>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script>
+    // =========================================================
+    // 1. INSERISCI QUI I TUOI DATI SUPABASE
+    // =========================================================
+
+    const SUPABASE_URL = "https://ifzvjtgvbynmmpzwasyw.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_fiB0Vt0b3RuGXC35RbHeNg_VO_u53Hb";
+
+    const supabaseClient = supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_KEY
+    );
+
+
+    // =========================================================
+    // 2. CREIAMO UN ID UNIVOCO PER QUESTO BROWSER
+    // =========================================================
+
+    function getSessionId() {
+      let sessionId = localStorage.getItem("session_id");
+
+      if (!sessionId) {
+        sessionId = crypto.randomUUID();
+        localStorage.setItem("session_id", sessionId);
+      }
+
+      return sessionId;
+    }
+
+    const sessionId = getSessionId();
+
+
+    // =========================================================
+    // 3. ELEMENTI DELLA PAGINA
+    // =========================================================
+
+    const inputA = document.getElementById("Zaino");
+    const inputB = document.getElementById("Servizio");
+    const salvaBtn = document.getElementById("salvaBtn");
+
+    const totaleA = document.getElementById("totaleA");
+    const totaleB = document.getElementById("totaleB");
+
+    const messaggio = document.getElementById("messaggio");
+
+
+    // =========================================================
+    // 4. CARICA I VALORI DELLA SESSIONE
+    // =========================================================
+
+    async function caricaMieiValori() {
+
+      const { data, error } = await supabaseClient
+        .from("metriche")
+        .select("metrica_a, metrica_b")
+        .eq("session_id", sessionId)
+        .maybeSingle();
+
+      if (error) {
+        console.error(error);
+        return;
+      }
+
+      if (data) {
+        inputA.value = data.metrica_a;
+        inputB.value = data.metrica_b;
+      }
+    }
+
+
+    // =========================================================
+    // 5. CALCOLA I TOTALI DI TUTTI
+    // =========================================================
+
+    async function caricaTotali() {
+
+      const { data, error } = await supabaseClient
+        .from("metriche")
+        .select("metrica_a, metrica_b");
+
+      if (error) {
+        console.error(error);
+        messaggio.textContent = "Errore nel caricamento dei dati.";
+        return;
+      }
+
+      let sommaA = 0;
+      let sommaB = 0;
+
+      for (const riga of data) {
+        sommaA += Number(riga.metrica_a) || 0;
+        sommaB += Number(riga.metrica_b) || 0;
+      }
+
+      totaleA.textContent = sommaA;
+      totaleB.textContent = sommaB;
+    }
+
+
+    // =========================================================
+    // 6. SALVA I DATI DELLA SESSIONE
+    // =========================================================
+
+    async function salva() {
+
+      const valoreA = Number(inputA.value) || 0;
+      const valoreB = Number(inputB.value) || 0;
+
+      messaggio.textContent = "Salvataggio...";
+
+      const { error } = await supabaseClient
+        .from("metriche")
+        .upsert(
+          {
+            session_id: sessionId,
+            metrica_a: valoreA,
+            metrica_b: valoreB
+          },
+          {
+            onConflict: "session_id"
+          }
+        );
+
+      if (error) {
+        console.error(error);
+        messaggio.textContent = "Errore nel salvataggio.";
+        return;
+      }
+
+      messaggio.textContent = "Salvato!";
+
+      await caricaTotali();
+    }
+
+
+    // =========================================================
+    // 7. EVENTI
+    // =========================================================
+
+    salvaBtn.addEventListener("click", salva);
+
+
+    // =========================================================
+    // 8. CARICAMENTO INIZIALE
+    // =========================================================
+
+    caricaMieiValori();
+    caricaTotali();
+
+
+    // Aggiorna i totali automaticamente ogni 2 secondi
+    setInterval(caricaTotali, 2000);
+
+  </script>
+
+</body>
+</html>
