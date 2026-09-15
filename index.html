@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>Metriche</title>
+  <title>Pesi del Servizio</title>
 
   <style>
     * {
@@ -20,40 +20,81 @@
 
     .container {
       max-width: 500px;
-      margin: 50px auto;
-      padding: 24px;
+      margin: 30px auto;
+      padding: 20px;
     }
 
     .card {
       background: white;
       padding: 24px;
       border-radius: 16px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     }
 
     h1 {
       margin-top: 0;
       text-align: center;
+      margin-bottom: 30px;
     }
 
-    label {
-      display: block;
-      margin-top: 18px;
-      margin-bottom: 6px;
+    h2 {
+      margin-bottom: 20px;
+    }
+
+    h3 {
+      margin-top: 0;
+      margin-bottom: 15px;
+    }
+
+    /* =========================
+       SLIDER
+       ========================= */
+
+    .slider-group {
+      margin-top: 22px;
+    }
+
+    .slider-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .slider-header label {
+      margin: 0;
       font-weight: bold;
+      font-size: 18px;
     }
 
-    input {
-      width: 100%;
-      padding: 14px;
-      font-size: 18px;
-      border: 1px solid #ccc;
-      border-radius: 10px;
+    .slider-value {
+      font-size: 22px;
+      font-weight: bold;
+      min-width: 60px;
+      text-align: right;
     }
+
+    input[type="range"] {
+      width: 100%;
+      cursor: pointer;
+      height: 8px;
+    }
+
+    .slider-scale {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: #888;
+      margin-top: 4px;
+    }
+
+    /* =========================
+       BOTTONI
+       ========================= */
 
     button {
       width: 100%;
-      margin-top: 22px;
+      margin-top: 24px;
       padding: 14px;
       font-size: 18px;
       font-weight: bold;
@@ -68,6 +109,36 @@
       opacity: 0.9;
     }
 
+    .reset-btn {
+      width: auto;
+      display: block;
+      margin: 30px auto 0;
+      padding: 8px 14px;
+      font-size: 12px;
+      background: transparent;
+      color: #999;
+      border: 1px solid #ccc;
+    }
+
+    .reset-btn:hover {
+      background: #eee;
+      color: #555;
+    }
+
+    /* =========================
+       MESSAGGI
+       ========================= */
+
+    .messaggio {
+      margin-top: 15px;
+      text-align: center;
+      min-height: 20px;
+    }
+
+    /* =========================
+       RISULTATI
+       ========================= */
+
     .totali {
       margin-top: 30px;
       padding-top: 20px;
@@ -77,105 +148,243 @@
     .totale {
       display: flex;
       justify-content: space-between;
-      font-size: 20px;
+      align-items: center;
+      font-size: 18px;
       margin: 12px 0;
+      gap: 20px;
     }
 
-    .messaggio {
+    .totale strong {
+      font-size: 20px;
+    }
+
+    /* =========================
+       DISTRIBUZIONE
+       ========================= */
+
+    .distribuzione {
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid #ddd;
+    }
+
+    .distribution-card {
+      background: #f8f8f8;
+      border-radius: 12px;
+      padding: 16px;
       margin-top: 15px;
-      text-align: center;
-      min-height: 20px;
     }
 
-    .reset-btn {
-  width: auto;
-  display: block;
-  margin: 30px auto 0;
-  padding: 8px 14px;
-  font-size: 12px;
-  background: transparent;
-  color: #999;
-  border: 1px solid #ccc;
-}
+    .distribution-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid #e5e5e5;
+      gap: 15px;
+    }
 
-.reset-btn:hover {
-  background: #eee;
-  color: #555;
-}
+    .distribution-item:last-child {
+      border-bottom: none;
+    }
+
+    .distribution-value {
+      font-weight: bold;
+    }
+
+    .distribution-count {
+      color: #666;
+      font-size: 14px;
+    }
+
+    .nessun-dato {
+      color: #888;
+      font-size: 14px;
+    }
   </style>
 </head>
 
 <body>
 
   <div class="container">
+
     <div class="card">
 
-      <h1>Metriche</h1>
+      <h1>Pesi del Servizio</h1>
 
-      <label for="Zaino">Zaino</label>
-      <input
-        id="Zaino"
-        type="number"
-        step="any"
-        placeholder="Inserisci Peso Dello Zaino"
-      />
 
-      <label for="Servizio">Peso Del Servizio</label>
-      <input
-        id="Servizio"
-        type="number"
-        step="any"
-        placeholder="Inserisci Peso Del Servizio"
-      />
+      <!-- =========================
+           INPUT ZAINO
+           ========================= -->
+
+      <div class="slider-group">
+
+        <div class="slider-header">
+          <label for="Zaino">Peso dello Zaino</label>
+
+          <div class="slider-value">
+            <span id="valoreZaino">15</span>
+          </div>
+        </div>
+
+        <input
+          id="Zaino"
+          type="range"
+          min="1"
+          max="30"
+          step="1"
+          value="15"
+        />
+
+        <div class="slider-scale">
+          <span>1</span>
+          <span>30</span>
+        </div>
+
+      </div>
+
+
+      <!-- =========================
+           INPUT SERVIZIO
+           ========================= -->
+
+      <div class="slider-group">
+
+        <div class="slider-header">
+          <label for="Servizio">Peso del Servizio</label>
+
+          <div class="slider-value">
+            <span id="valoreServizio">15</span>
+          </div>
+        </div>
+
+        <input
+          id="Servizio"
+          type="range"
+          min="1"
+          max="30"
+          step="1"
+          value="15"
+        />
+
+        <div class="slider-scale">
+          <span>1</span>
+          <span>30</span>
+        </div>
+
+      </div>
+
 
       <button id="salvaBtn">SALVA</button>
 
       <div class="messaggio" id="messaggio"></div>
 
-<div class="totali">
-  <h2>Risultati</h2>
 
-  <div class="totale">
-    <span>Persone che hanno votato</span>
-    <strong id="numPersone">0</strong>
-  </div>
+      <!-- =========================
+           RISULTATI
+           ========================= -->
 
-  <div class="totale">
-    <span>Peso Totale Zaino</span>
-    <strong id="totZaino">0</strong>
-  </div>
+      <div class="totali">
 
-  <div class="totale">
-    <span>Peso Totale del Servizio</span>
-    <strong id="totServ">0</strong>
-  </div>
+        <h2>Risultati</h2>
 
-  <div class="totale">
-    <span>Media Zaino</span>
-    <strong id="mediaZaino">0</strong>
-  </div>
+        <div class="totale">
+          <span>Persone che hanno votato</span>
+          <strong id="numPersone">0</strong>
+        </div>
 
-  <div class="totale">
-    <span>Media Servizio</span>
-    <strong id="mediaServ">0</strong>
-  </div>
-</div>
+        <div class="totale">
+          <span>Peso Totale Zaino</span>
+          <strong id="totZaino">0</strong>
+        </div>
 
-<button id="resetBtn" class="reset-btn">RESET</button>
+        <div class="totale">
+          <span>Peso Totale del Servizio</span>
+          <strong id="totServ">0</strong>
+        </div>
+
+        <div class="totale">
+          <span>Media Zaino</span>
+          <strong id="mediaZaino">0</strong>
+        </div>
+
+        <div class="totale">
+          <span>Media Servizio</span>
+          <strong id="mediaServ">0</strong>
+        </div>
+
+      </div>
+
+
+      <!-- =========================
+           DISTRIBUZIONE
+           ========================= -->
+
+      <div class="distribuzione">
+
+        <h2>Distribuzione</h2>
+
+
+        <!-- ZAINO -->
+
+        <div class="distribution-card">
+
+          <h3>Peso dello Zaino</h3>
+
+          <div id="topZaino">
+            <div class="nessun-dato">
+              Nessun dato
+            </div>
+          </div>
+
+        </div>
+
+
+        <!-- SERVIZIO -->
+
+        <div class="distribution-card">
+
+          <h3>Peso del Servizio</h3>
+
+          <div id="topServizio">
+            <div class="nessun-dato">
+              Nessun dato
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- =========================
+           RESET
+           ========================= -->
+
+      <button id="resetBtn" class="reset-btn">
+        RESET
+      </button>
 
     </div>
+
   </div>
+
 
   <!-- Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+
   <script>
+
     // =========================================================
-    // 1. INSERISCI QUI I TUOI DATI SUPABASE
+    // 1. SUPABASE
     // =========================================================
 
-    const SUPABASE_URL = "https://ifzvjtgvbynmmpzwasyw.supabase.co";
-    const SUPABASE_KEY = "sb_publishable_fiB0Vt0b3RuGXC35RbHeNg_VO_u53Hb";
+    const SUPABASE_URL =
+      "https://ifzvjtgvbynmmpzwasyw.supabase.co";
+
+    const SUPABASE_KEY =
+      "sb_publishable_fiB0Vt0b3RuGXC35RbHeNg_VO_u53Hb";
 
     const supabaseClient = supabase.createClient(
       SUPABASE_URL,
@@ -184,15 +393,23 @@
 
 
     // =========================================================
-    // 2. CREIAMO UN ID UNIVOCO PER QUESTO BROWSER
+    // 2. SESSION ID
     // =========================================================
 
     function getSessionId() {
-      let sessionId = localStorage.getItem("session_id");
+
+      let sessionId =
+        localStorage.getItem("session_id");
 
       if (!sessionId) {
-        sessionId = crypto.randomUUID();
-        localStorage.setItem("session_id", sessionId);
+
+        sessionId =
+          crypto.randomUUID();
+
+        localStorage.setItem(
+          "session_id",
+          sessionId
+        );
       }
 
       return sessionId;
@@ -202,183 +419,522 @@
 
 
     // =========================================================
-    // 3. ELEMENTI DELLA PAGINA
+    // 3. ELEMENTI PAGINA
     // =========================================================
 
-    const inputA = document.getElementById("Zaino");
-    const inputB = document.getElementById("Servizio");
-    const salvaBtn = document.getElementById("salvaBtn");
+    const inputA =
+      document.getElementById("Zaino");
 
-    const totaleA = document.getElementById("totZaino");
-    const totaleB = document.getElementById("totServ");
+    const inputB =
+      document.getElementById("Servizio");
 
-    const numPersone = document.getElementById("numPersone");
-    const mediaZaino = document.getElementById("mediaZaino");
-    const mediaServ = document.getElementById("mediaServ");
-    const resetBtn = document.getElementById("resetBtn");
+    const valoreZaino =
+      document.getElementById("valoreZaino");
 
-    const messaggio = document.getElementById("messaggio");
+    const valoreServizio =
+      document.getElementById("valoreServizio");
+
+    const salvaBtn =
+      document.getElementById("salvaBtn");
+
+    const resetBtn =
+      document.getElementById("resetBtn");
+
+    const totaleA =
+      document.getElementById("totZaino");
+
+    const totaleB =
+      document.getElementById("totServ");
+
+    const numPersone =
+      document.getElementById("numPersone");
+
+    const mediaZaino =
+      document.getElementById("mediaZaino");
+
+    const mediaServ =
+      document.getElementById("mediaServ");
+
+    const topZaino =
+      document.getElementById("topZaino");
+
+    const topServizio =
+      document.getElementById("topServizio");
+
+    const messaggio =
+      document.getElementById("messaggio");
 
 
     // =========================================================
-    // 4. CARICA I VALORI DELLA SESSIONE
+    // 4. AGGIORNAMENTO VISIVO SLIDER
+    // =========================================================
+
+    function aggiornaSliderZaino() {
+      valoreZaino.textContent = inputA.value;
+    }
+
+    function aggiornaSliderServizio() {
+      valoreServizio.textContent = inputB.value;
+    }
+
+    inputA.addEventListener(
+      "input",
+      aggiornaSliderZaino
+    );
+
+    inputB.addEventListener(
+      "input",
+      aggiornaSliderServizio
+    );
+
+
+    // =========================================================
+    // 5. CARICA I VALORI DELLA SESSIONE
     // =========================================================
 
     async function caricaMieiValori() {
 
-      const { data, error } = await supabaseClient
-        .from("metriche")
-        .select("peso_zaino, peso_bilancia")
-        .eq("session_id", sessionId)
-        .maybeSingle();
+      const { data, error } =
+        await supabaseClient
+          .from("metriche")
+          .select(
+            "peso_zaino, peso_bilancia"
+          )
+          .eq(
+            "session_id",
+            sessionId
+          )
+          .maybeSingle();
 
       if (error) {
-        console.error("ERRORE CARICAMENTO MIEI DATI:", error);
-        messaggio.textContent = "Errore: " + error.message;
+
+        console.error(
+          "ERRORE CARICAMENTO MIEI DATI:",
+          error
+        );
+
+        messaggio.textContent =
+          "Errore: " + error.message;
+
         return;
       }
 
       if (data) {
-        inputA.value = data.peso_zaino;
-        inputB.value = data.peso_bilancia;
+
+        let zaino =
+          Number(data.peso_zaino) || 1;
+
+        let servizio =
+          Number(data.peso_bilancia) || 1;
+
+        // Manteniamo i valori nello
+        // spazio disponibile dello slider
+        zaino = Math.min(
+          30,
+          Math.max(1, zaino)
+        );
+
+        servizio = Math.min(
+          30,
+          Math.max(1, servizio)
+        );
+
+        inputA.value = zaino;
+        inputB.value = servizio;
+
+        aggiornaSliderZaino();
+        aggiornaSliderServizio();
       }
     }
 
 
     // =========================================================
-    // 5. CALCOLA I TOTALI DI TUTTI
+    // 6. CALCOLA RISULTATI + DISTRIBUZIONE
     // =========================================================
 
     async function caricaTotali() {
 
-        const { data, error } = await supabaseClient
+      const { data, error } =
+        await supabaseClient
           .from("metriche")
-          .select("peso_zaino, peso_bilancia");
-      
-        if (error) {
-          console.error("ERRORE CARICAMENTO TOTALI:", error);
-          messaggio.textContent = "Errore: " + error.message;
-          return;
-        }
-      
-        let sommaZaino = 0;
-        let sommaServizio = 0;
-      
-        for (const riga of data) {
-          sommaZaino += Number(riga.peso_zaino) || 0;
-          sommaServizio += Number(riga.peso_bilancia) || 0;
-        }
-      
-        const numeroPersone = data.length;
-      
-        const mediaZainoVal =
-          numeroPersone > 0
-            ? sommaZaino / numeroPersone
-            : 0;
-      
-        const mediaServizioVal =
-          numeroPersone > 0
-            ? sommaServizio / numeroPersone
-            : 0;
-      
-        totaleA.textContent = sommaZaino;
-        totaleB.textContent = sommaServizio;
-      
-        numPersone.textContent = numeroPersone;
-      
-        mediaZaino.textContent = mediaZainoVal.toFixed(2);
-        mediaServ.textContent = mediaServizioVal.toFixed(2);
-}
+          .select(
+            "peso_zaino, peso_bilancia"
+          );
 
+      if (error) {
 
-    // =========================================================
-    // 6. SALVA I DATI DELLA SESSIONE
-    // =========================================================
+        console.error(
+          "ERRORE CARICAMENTO TOTALI:",
+          error
+        );
 
-async function salva() {
+        messaggio.textContent =
+          "Errore: " + error.message;
 
-  const valoreA = Number(inputA.value) || 0;
-  const valoreB = Number(inputB.value) || 0;
-
-  messaggio.textContent = "Salvataggio...";
-
-  const { data, error } = await supabaseClient
-    .from("metriche")
-    .upsert(
-      {
-        session_id: sessionId,
-        peso_zaino: valoreA,
-        peso_bilancia: valoreB
-      },
-      {
-        onConflict: "session_id"
+        return;
       }
-    )
-    .select();
 
-  if (error) {
-    console.error("ERRORE SUPABASE:", error);
-    messaggio.textContent = "Errore: " + error.message;
-    return;
-  }
 
-  console.log("Salvato:", data);
+      let sommaZaino = 0;
+      let sommaServizio = 0;
 
-  messaggio.textContent = "Salvato!";
 
-  await caricaTotali();
-}
+      // Conteggio frequenze
+      const frequenzeZaino = {};
+      const frequenzeServizio = {};
 
-async function resetTutto() {
 
-    const conferma = confirm(
-      "Sei sicuro di voler cancellare TUTTI i valori?"
+      for (const riga of data) {
+
+        const zaino =
+          Number(riga.peso_zaino) || 0;
+
+        const servizio =
+          Number(riga.peso_bilancia) || 0;
+
+
+        sommaZaino += zaino;
+        sommaServizio += servizio;
+
+
+        // Frequenza Zaino
+        if (zaino > 0) {
+
+          frequenzeZaino[zaino] =
+            (frequenzeZaino[zaino] || 0) + 1;
+        }
+
+
+        // Frequenza Servizio
+        if (servizio > 0) {
+
+          frequenzeServizio[servizio] =
+            (frequenzeServizio[servizio] || 0) + 1;
+        }
+      }
+
+
+      // =======================================================
+      // NUMERO PERSONE
+      // =======================================================
+
+      const numeroPersone =
+        data.length;
+
+
+      // =======================================================
+      // MEDIE
+      // =======================================================
+
+      const mediaZainoVal =
+        numeroPersone > 0
+          ? sommaZaino / numeroPersone
+          : 0;
+
+      const mediaServizioVal =
+        numeroPersone > 0
+          ? sommaServizio / numeroPersone
+          : 0;
+
+
+      // =======================================================
+      // RISULTATI TESTUALI
+      // =======================================================
+
+      totaleA.textContent =
+        sommaZaino;
+
+      totaleB.textContent =
+        sommaServizio;
+
+      numPersone.textContent =
+        numeroPersone;
+
+      mediaZaino.textContent =
+        mediaZainoVal.toFixed(2);
+
+      mediaServ.textContent =
+        mediaServizioVal.toFixed(2);
+
+
+      // =======================================================
+      // TOP 3 ZAINO
+      // =======================================================
+
+      const top3Zaino =
+        Object.entries(frequenzeZaino)
+          .sort((a, b) => {
+
+            // Prima quantità di voti
+            const differenzaConteggio =
+              Number(b[1]) - Number(a[1]);
+
+            if (differenzaConteggio !== 0) {
+              return differenzaConteggio;
+            }
+
+            // In caso di parità,
+            // valore più alto prima
+            return Number(b[0]) - Number(a[0]);
+          })
+          .slice(0, 3);
+
+
+      // =======================================================
+      // TOP 3 SERVIZIO
+      // =======================================================
+
+      const top3Servizio =
+        Object.entries(frequenzeServizio)
+          .sort((a, b) => {
+
+            const differenzaConteggio =
+              Number(b[1]) - Number(a[1]);
+
+            if (differenzaConteggio !== 0) {
+              return differenzaConteggio;
+            }
+
+            return Number(b[0]) - Number(a[0]);
+          })
+          .slice(0, 3);
+
+
+      mostraDistribuzione(
+        topZaino,
+        top3Zaino
+      );
+
+      mostraDistribuzione(
+        topServizio,
+        top3Servizio
+      );
+    }
+
+
+    // =========================================================
+    // 7. MOSTRA TOP 3
+    // =========================================================
+
+    function mostraDistribuzione(
+      elemento,
+      valori
+    ) {
+
+      elemento.innerHTML = "";
+
+
+      if (valori.length === 0) {
+
+        elemento.innerHTML =
+          '<div class="nessun-dato">Nessun dato</div>';
+
+        return;
+      }
+
+
+      valori.forEach(
+        ([valore, conteggio]) => {
+
+          const riga =
+            document.createElement("div");
+
+          riga.className =
+            "distribution-item";
+
+
+          const valoreDiv =
+            document.createElement("div");
+
+          valoreDiv.className =
+            "distribution-value";
+
+          valoreDiv.textContent =
+            valore + " kg";
+
+
+          const conteggioDiv =
+            document.createElement("div");
+
+          conteggioDiv.className =
+            "distribution-count";
+
+          conteggioDiv.textContent =
+            conteggio +
+            (
+              conteggio === 1
+                ? " persona"
+                : " persone"
+            );
+
+
+          riga.appendChild(
+            valoreDiv
+          );
+
+          riga.appendChild(
+            conteggioDiv
+          );
+
+          elemento.appendChild(
+            riga
+          );
+        }
+      );
+    }
+
+
+    // =========================================================
+    // 8. SALVA
+    // =========================================================
+
+    async function salva() {
+
+      const valoreA =
+        Number(inputA.value);
+
+      const valoreB =
+        Number(inputB.value);
+
+
+      messaggio.textContent =
+        "Salvataggio...";
+
+
+      const { data, error } =
+        await supabaseClient
+          .from("metriche")
+          .upsert(
+            {
+              session_id: sessionId,
+              peso_zaino: valoreA,
+              peso_bilancia: valoreB
+            },
+            {
+              onConflict: "session_id"
+            }
+          )
+          .select();
+
+
+      if (error) {
+
+        console.error(
+          "ERRORE SUPABASE:",
+          error
+        );
+
+        messaggio.textContent =
+          "Errore: " + error.message;
+
+        return;
+      }
+
+
+      console.log(
+        "Salvato:",
+        data
+      );
+
+
+      messaggio.textContent =
+        "Salvato!";
+
+
+      await caricaTotali();
+    }
+
+
+    // =========================================================
+    // 9. RESET
+    // =========================================================
+
+    async function resetTutto() {
+
+      const conferma =
+        confirm(
+          "Sei sicuro di voler cancellare TUTTI i valori?"
+        );
+
+
+      if (!conferma) {
+        return;
+      }
+
+
+      messaggio.textContent =
+        "Reset in corso...";
+
+
+      const { error } =
+        await supabaseClient
+          .from("metriche")
+          .delete()
+          .not(
+            "session_id",
+            "is",
+            null
+          );
+
+
+      if (error) {
+
+        console.error(
+          "ERRORE RESET:",
+          error
+        );
+
+        messaggio.textContent =
+          "Errore: " + error.message;
+
+        return;
+      }
+
+
+      // Ripristina gli slider
+      inputA.value = 15;
+      inputB.value = 15;
+
+      aggiornaSliderZaino();
+      aggiornaSliderServizio();
+
+
+      await caricaTotali();
+
+
+      messaggio.textContent =
+        "Tutto azzerato.";
+    }
+
+
+    // =========================================================
+    // 10. EVENTI
+    // =========================================================
+
+    salvaBtn.addEventListener(
+      "click",
+      salva
     );
-  
-    if (!conferma) {
-      return;
-    }
-  
-    messaggio.textContent = "Reset in corso...";
-  
-    const { error } = await supabaseClient
-      .from("metriche")
-      .delete()
-      .not("session_id", "is", null);
-  
-    if (error) {
-      console.error("ERRORE RESET:", error);
-      messaggio.textContent = "Errore: " + error.message;
-      return;
-    }
-  
-    inputA.value = "";
-    inputB.value = "";
-  
-    await caricaTotali();
-  
-    messaggio.textContent = "Tutto azzerato.";
-}
+
+    resetBtn.addEventListener(
+      "click",
+      resetTutto
+    );
 
 
     // =========================================================
-    // 7. EVENTI
-    // =========================================================
-
-    salvaBtn.addEventListener("click", salva);
-    resetBtn.addEventListener("click", resetTutto);
-
-
-    // =========================================================
-    // 8. CARICAMENTO INIZIALE
+    // 11. CARICAMENTO INIZIALE
     // =========================================================
 
     caricaMieiValori();
     caricaTotali();
 
 
-    // Aggiorna i totali automaticamente ogni 2 secondi
-    setInterval(caricaTotali, 2000);
+    // Aggiorna i risultati ogni 2 secondi
+    setInterval(
+      caricaTotali,
+      2000
+    );
 
   </script>
 
