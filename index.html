@@ -159,7 +159,7 @@
     }
 
     /* =========================
-       DISTRIBUZIONE
+       GRAFICI
        ========================= */
 
     .distribuzione {
@@ -175,31 +175,63 @@
       margin-top: 15px;
     }
 
-    .distribution-item {
+    .chart-wrapper {
+      margin-top: 10px;
+      overflow-x: auto;
+      padding-bottom: 5px;
+    }
+
+    .chart {
       display: flex;
-      justify-content: space-between;
+      align-items: flex-end;
+      gap: 3px;
+      height: 180px;
+      min-width: 700px;
+      padding: 0 4px;
+      border-bottom: 1px solid #ccc;
+    }
+
+    .bar-container {
+      flex: 1;
+      min-width: 18px;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
       align-items: center;
-      padding: 10px 0;
-      border-bottom: 1px solid #e5e5e5;
-      gap: 15px;
     }
 
-    .distribution-item:last-child {
-      border-bottom: none;
+    .bar {
+      width: 100%;
+      min-height: 0;
+      background: #333;
+      border-radius: 4px 4px 0 0;
+      transition: height 0.3s ease;
+      position: relative;
     }
 
-    .distribution-value {
-      font-weight: bold;
+    .bar:hover {
+      opacity: 0.75;
     }
 
-    .distribution-count {
-      color: #666;
-      font-size: 14px;
+    .bar-value {
+      font-size: 10px;
+      color: #555;
+      margin-bottom: 4px;
+      min-height: 12px;
+    }
+
+    .bar-label {
+      font-size: 9px;
+      color: #777;
+      margin-top: 5px;
     }
 
     .nessun-dato {
       color: #888;
       font-size: 14px;
+      text-align: center;
+      padding: 30px 0;
     }
   </style>
 </head>
@@ -331,10 +363,8 @@
 
           <h3>Peso dello Zaino</h3>
 
-          <div id="topZaino">
-            <div class="nessun-dato">
-              Nessun dato
-            </div>
+          <div class="chart-wrapper">
+            <div id="chartZaino" class="chart"></div>
           </div>
 
         </div>
@@ -346,10 +376,8 @@
 
           <h3>Peso del Servizio</h3>
 
-          <div id="topServizio">
-            <div class="nessun-dato">
-              Nessun dato
-            </div>
+          <div class="chart-wrapper">
+            <div id="chartServizio" class="chart"></div>
           </div>
 
         </div>
@@ -455,11 +483,11 @@
     const mediaServ =
       document.getElementById("mediaServ");
 
-    const topZaino =
-      document.getElementById("topZaino");
+    const chartZaino =
+      document.getElementById("chartZaino");
 
-    const topServizio =
-      document.getElementById("topServizio");
+    const chartServizio =
+      document.getElementById("chartServizio");
 
     const messaggio =
       document.getElementById("messaggio");
@@ -527,8 +555,6 @@
         let servizio =
           Number(data.peso_bilancia) || 1;
 
-        // Manteniamo i valori nello
-        // spazio disponibile dello slider
         zaino = Math.min(
           30,
           Math.max(1, zaino)
@@ -549,7 +575,7 @@
 
 
     // =========================================================
-    // 6. CALCOLA RISULTATI + DISTRIBUZIONE
+    // 6. CALCOLA RISULTATI E DISTRIBUZIONE
     // =========================================================
 
     async function caricaTotali() {
@@ -578,10 +604,14 @@
       let sommaZaino = 0;
       let sommaServizio = 0;
 
+      // Array con 31 posizioni.
+      // Usiamo direttamente il valore come indice:
+      // [0] inutilizzato, [1] = numero voti per 1 kg, ecc.
+      const distribuzioneZaino =
+        new Array(31).fill(0);
 
-      // Conteggio frequenze
-      const frequenzeZaino = {};
-      const frequenzeServizio = {};
+      const distribuzioneServizio =
+        new Array(31).fill(0);
 
 
       for (const riga of data) {
@@ -597,19 +627,12 @@
         sommaServizio += servizio;
 
 
-        // Frequenza Zaino
-        if (zaino > 0) {
-
-          frequenzeZaino[zaino] =
-            (frequenzeZaino[zaino] || 0) + 1;
+        if (zaino >= 1 && zaino <= 30) {
+          distribuzioneZaino[zaino]++;
         }
 
-
-        // Frequenza Servizio
-        if (servizio > 0) {
-
-          frequenzeServizio[servizio] =
-            (frequenzeServizio[servizio] || 0) + 1;
+        if (servizio >= 1 && servizio <= 30) {
+          distribuzioneServizio[servizio]++;
         }
       }
 
@@ -638,7 +661,7 @@
 
 
       // =======================================================
-      // RISULTATI TESTUALI
+      // RISULTATI
       // =======================================================
 
       totaleA.textContent =
@@ -658,73 +681,38 @@
 
 
       // =======================================================
-      // TOP 3 ZAINO
+      // GRAFICI
       // =======================================================
 
-      const top3Zaino =
-        Object.entries(frequenzeZaino)
-          .sort((a, b) => {
-
-            // Prima quantità di voti
-            const differenzaConteggio =
-              Number(b[1]) - Number(a[1]);
-
-            if (differenzaConteggio !== 0) {
-              return differenzaConteggio;
-            }
-
-            // In caso di parità,
-            // valore più alto prima
-            return Number(b[0]) - Number(a[0]);
-          })
-          .slice(0, 3);
-
-
-      // =======================================================
-      // TOP 3 SERVIZIO
-      // =======================================================
-
-      const top3Servizio =
-        Object.entries(frequenzeServizio)
-          .sort((a, b) => {
-
-            const differenzaConteggio =
-              Number(b[1]) - Number(a[1]);
-
-            if (differenzaConteggio !== 0) {
-              return differenzaConteggio;
-            }
-
-            return Number(b[0]) - Number(a[0]);
-          })
-          .slice(0, 3);
-
-
-      mostraDistribuzione(
-        topZaino,
-        top3Zaino
+      creaGrafico(
+        chartZaino,
+        distribuzioneZaino
       );
 
-      mostraDistribuzione(
-        topServizio,
-        top3Servizio
+      creaGrafico(
+        chartServizio,
+        distribuzioneServizio
       );
     }
 
 
     // =========================================================
-    // 7. MOSTRA TOP 3
+    // 7. CREA GRAFICO
     // =========================================================
 
-    function mostraDistribuzione(
+    function creaGrafico(
       elemento,
-      valori
+      distribuzione
     ) {
 
       elemento.innerHTML = "";
 
 
-      if (valori.length === 0) {
+      const massimo =
+        Math.max(...distribuzione);
+
+
+      if (massimo === 0) {
 
         elemento.innerHTML =
           '<div class="nessun-dato">Nessun dato</div>';
@@ -733,33 +721,56 @@
       }
 
 
-      valori.forEach(
-        ([valore, conteggio]) => {
+      // Creo le 30 colonne: una per ogni peso
+      for (
+        let valore = 1;
+        valore <= 30;
+        valore++
+      ) {
 
-          const riga =
-            document.createElement("div");
-
-          riga.className =
-            "distribution-item";
-
-
-          const valoreDiv =
-            document.createElement("div");
-
-          valoreDiv.className =
-            "distribution-value";
-
-          valoreDiv.textContent =
-            valore + " kg";
+        const conteggio =
+          distribuzione[valore];
 
 
-          const conteggioDiv =
-            document.createElement("div");
+        const container =
+          document.createElement("div");
 
-          conteggioDiv.className =
-            "distribution-count";
+        container.className =
+          "bar-container";
 
-          conteggioDiv.textContent =
+
+        // Numero di voti sopra la barra
+        const valoreDiv =
+          document.createElement("div");
+
+        valoreDiv.className =
+          "bar-value";
+
+        valoreDiv.textContent =
+          conteggio > 0
+            ? conteggio
+            : "";
+
+
+        // Barra
+        const bar =
+          document.createElement("div");
+
+        bar.className =
+          "bar";
+
+
+        if (conteggio > 0) {
+
+          const altezza =
+            (conteggio / massimo) * 100;
+
+          bar.style.height =
+            altezza + "%";
+
+          bar.title =
+            valore +
+            " kg: " +
             conteggio +
             (
               conteggio === 1
@@ -767,20 +778,43 @@
                 : " persone"
             );
 
+        } else {
 
-          riga.appendChild(
-            valoreDiv
-          );
+          bar.style.height =
+            "0%";
 
-          riga.appendChild(
-            conteggioDiv
-          );
-
-          elemento.appendChild(
-            riga
-          );
+          bar.title =
+            valore + " kg: nessun voto";
         }
-      );
+
+
+        // Etichetta 1-30
+        const label =
+          document.createElement("div");
+
+        label.className =
+          "bar-label";
+
+        label.textContent =
+          valore;
+
+
+        container.appendChild(
+          valoreDiv
+        );
+
+        container.appendChild(
+          bar
+        );
+
+        container.appendChild(
+          label
+        );
+
+        elemento.appendChild(
+          container
+        );
+      }
     }
 
 
@@ -891,7 +925,6 @@
       }
 
 
-      // Ripristina gli slider
       inputA.value = 15;
       inputB.value = 15;
 
