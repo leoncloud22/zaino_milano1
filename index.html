@@ -86,6 +86,22 @@
       text-align: center;
       min-height: 20px;
     }
+
+    .reset-btn {
+  width: auto;
+  display: block;
+  margin: 30px auto 0;
+  padding: 8px 14px;
+  font-size: 12px;
+  background: transparent;
+  color: #999;
+  border: 1px solid #ccc;
+}
+
+.reset-btn:hover {
+  background: #eee;
+  color: #555;
+}
   </style>
 </head>
 
@@ -116,19 +132,36 @@
 
       <div class="messaggio" id="messaggio"></div>
 
-      <div class="totali">
-        <h2>Totale condiviso</h2>
+<div class="totali">
+  <h2>Risultati</h2>
 
-        <div class="totale">
-          <span>Peso Totale Zaino</span>
-          <strong id="totZaino">0</strong>
-        </div>
+  <div class="totale">
+    <span>Persone che hanno votato</span>
+    <strong id="numPersone">0</strong>
+  </div>
 
-        <div class="totale">
-          <span>Peso Totale del Servizio</span>
-          <strong id="totServ">0</strong>
-        </div>
-      </div>
+  <div class="totale">
+    <span>Peso Totale Zaino</span>
+    <strong id="totZaino">0</strong>
+  </div>
+
+  <div class="totale">
+    <span>Peso Totale del Servizio</span>
+    <strong id="totServ">0</strong>
+  </div>
+
+  <div class="totale">
+    <span>Media Zaino</span>
+    <strong id="mediaZaino">0</strong>
+  </div>
+
+  <div class="totale">
+    <span>Media Servizio</span>
+    <strong id="mediaServ">0</strong>
+  </div>
+</div>
+
+<button id="resetBtn" class="reset-btn">RESET</button>
 
     </div>
   </div>
@@ -179,6 +212,11 @@
     const totaleA = document.getElementById("totZaino");
     const totaleB = document.getElementById("totServ");
 
+    const numPersone = document.getElementById("numPersone");
+    const mediaZaino = document.getElementById("mediaZaino");
+    const mediaServ = document.getElementById("mediaServ");
+    const resetBtn = document.getElementById("resetBtn");
+
     const messaggio = document.getElementById("messaggio");
 
 
@@ -213,27 +251,44 @@
 
     async function caricaTotali() {
 
-      const { data, error } = await supabaseClient
-        .from("metriche")
-        .select("peso_zaino, peso_bilancia");
-
-      if (error) {
-        console.error("ERRORE CARICAMENTO TOTALI:", error);
-        messaggio.textContent = "Errore: " + error.message;
-        return;
-      }
-
-      let sommaA = 0;
-      let sommaB = 0;
-
-      for (const riga of data) {
-        sommaA += Number(riga.peso_zaino) || 0;
-        sommaB += Number(riga.peso_bilancia) || 0;
-      }
-
-      totaleA.textContent = sommaA;
-      totaleB.textContent = sommaB;
-    }
+        const { data, error } = await supabaseClient
+          .from("metriche")
+          .select("peso_zaino, peso_bilancia");
+      
+        if (error) {
+          console.error("ERRORE CARICAMENTO TOTALI:", error);
+          messaggio.textContent = "Errore: " + error.message;
+          return;
+        }
+      
+        let sommaZaino = 0;
+        let sommaServizio = 0;
+      
+        for (const riga of data) {
+          sommaZaino += Number(riga.peso_zaino) || 0;
+          sommaServizio += Number(riga.peso_bilancia) || 0;
+        }
+      
+        const numeroPersone = data.length;
+      
+        const mediaZainoVal =
+          numeroPersone > 0
+            ? sommaZaino / numeroPersone
+            : 0;
+      
+        const mediaServizioVal =
+          numeroPersone > 0
+            ? sommaServizio / numeroPersone
+            : 0;
+      
+        totaleA.textContent = sommaZaino;
+        totaleB.textContent = sommaServizio;
+      
+        numPersone.textContent = numeroPersone;
+      
+        mediaZaino.textContent = mediaZainoVal.toFixed(2);
+        mediaServ.textContent = mediaServizioVal.toFixed(2);
+}
 
 
     // =========================================================
@@ -274,12 +329,44 @@ async function salva() {
   await caricaTotali();
 }
 
+async function resetTutto() {
+
+    const conferma = confirm(
+      "Sei sicuro di voler cancellare TUTTI i valori?"
+    );
+  
+    if (!conferma) {
+      return;
+    }
+  
+    messaggio.textContent = "Reset in corso...";
+  
+    const { error } = await supabaseClient
+      .from("metriche")
+      .delete()
+      .not("session_id", "is", null);
+  
+    if (error) {
+      console.error("ERRORE RESET:", error);
+      messaggio.textContent = "Errore: " + error.message;
+      return;
+    }
+  
+    inputA.value = "";
+    inputB.value = "";
+  
+    await caricaTotali();
+  
+    messaggio.textContent = "Tutto azzerato.";
+}
+
 
     // =========================================================
     // 7. EVENTI
     // =========================================================
 
     salvaBtn.addEventListener("click", salva);
+    resetBtn.addEventListener("click", resetTutto);
 
 
     // =========================================================
